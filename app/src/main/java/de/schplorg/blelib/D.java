@@ -14,5 +14,9 @@ public class D {
             callback.print(s);
         }
     }
+
+    public static void println(String s ){
+        print(s + "\n");
+    }
 }
 

@@ -2,13 +2,12 @@ package de.schplorg.blelib;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanResult;
 
-import java.util.ArrayList;
-import java.util.Dictionary;
+import android.content.Context;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Sam Bäumer on 2/18/18.
@@ -16,22 +15,47 @@ import java.util.List;
  */
 
 public class BLEScanner {
+    Context c;
+    BluetoothManager manager;
     BluetoothAdapter adapter;
     BluetoothLeScanner leScanner;
     HashMap<String,BluetoothDevice> deviceList;
 
-    public BLEScanner(){
-        adapter = BluetoothAdapter.getDefaultAdapter();
+    public BLEScanner(Context c){
+        manager = (BluetoothManager)c.getSystemService(Context.BLUETOOTH_SERVICE);
+        adapter = manager.getAdapter();
         leScanner = adapter.getBluetoothLeScanner();
         deviceList = new HashMap<String,BluetoothDevice>();
     }
-
+    public boolean isScanning = false;
     public void start(){
-        leScanner.startScan(leScanCallback);
+        if(!isScanning){
+            if(leScanCallback != null){
+                if(leScanner != null){
+                    leScanner.startScan(leScanCallback);
+                    isScanning = true;
+                }else{
+                    D.println("leScanner null!");
+                }
+            }else{
+                D.println("leScanCallback null!");
+            }
+        }
     }
 
     public void stop(){
-        leScanner.stopScan(leScanCallback);
+        if(isScanning){
+            if(leScanCallback != null){
+                if(leScanner != null){
+                    leScanner.stopScan(leScanCallback);
+                    isScanning = false;
+                }else{
+                    D.println("leScanner null!");
+                }
+            }else{
+                D.println("leScanCallback null!");
+            }
+        }
     }
 
     private android.bluetooth.le.ScanCallback leScanCallback =
